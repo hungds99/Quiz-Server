@@ -81,19 +81,6 @@ const initSockets = (io) => {
         }
       });
 
-      // *** Start count down game
-      socket.on("start-count-down", ({ pin }) => {
-        // Đếm thời gian vào game
-        let countDown = 10;
-        let countDownInterval = setInterval(function () {
-          io.to(pin).emit("counter-game-start", countDown);
-          countDown--;
-          if (countDown === -2) {
-            clearInterval(countDownInterval);
-          }
-        }, 1200);
-      });
-
       // * B3. Khi host connect tới game
       socket.on("host-join-game", async (id) => {
         // Kiểm tra có tồn tại host hay không
@@ -113,7 +100,7 @@ const initSockets = (io) => {
           socket.emit("show-all-host-detail", hostDetail);
 
           // Đếm thời gian vào game
-          let counter = 10;
+          let counter = 6;
           let timerInterval = setInterval(function () {
             io.to(host.pin).emit("counter-game-start", counter);
             counter--;

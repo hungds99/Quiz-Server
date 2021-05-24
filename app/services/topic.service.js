@@ -16,7 +16,7 @@ async function create(topicParams) {
 }
 
 async function getAll() {
-  return await Topic.find().sort({ createdAt: "desc" });
+  return await Topic.find().sort({ createdAt: "desc" }).populate("creator");
 }
 
 async function getById(id) {

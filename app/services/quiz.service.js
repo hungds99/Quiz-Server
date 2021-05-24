@@ -70,7 +70,7 @@ async function getPaginationByCreator(params) {
 
 async function getPaginationByTopic(params) {
   let { topic, keyword, pageNumber, pageSize, sortField, sortType } = params;
-  let data = await Quiz.find({ topic: topic })
+  let data = await Quiz.find({ topic: topic, isPublic: true })
     .sort({ [sortField]: sortType })
     .skip(pageNumber * pageSize)
     .limit(pageSize)
@@ -83,7 +83,7 @@ async function getPaginationByTopic(params) {
 
 async function getPagination(params) {
   let { topic, keyword, pageNumber, pageSize, sortField, sortType } = params;
-  let filter = {};
+  let filter = { isPublic: true };
   if (topic) {
     filter = { ...filter, topic: topic };
   }
