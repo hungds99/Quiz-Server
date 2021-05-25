@@ -32,9 +32,13 @@ async function update(quizParams) {
     Object.assign(quiz, quizParams);
     return await quiz
       .save()
-      .populate("questions")
-      .populate("creator")
-      .populate("topic");
+      .then((qz) =>
+        qz
+          .populate("questions")
+          .populate("creator")
+          .populate("topic")
+          .execPopulate()
+      );
   }
 }
 
