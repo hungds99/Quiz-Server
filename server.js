@@ -19,7 +19,7 @@ const ScoreRouter = require("./app/routers/score.router");
 const app = express();
 
 // parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // parse application/json
 app.use(bodyParser.json());
@@ -38,7 +38,7 @@ let server = http.createServer(app);
 let io = socketio(server, {
   path: "/socket.io",
   cors: {
-    origin: ["http://localhost:3000", "https://admin.socket.io"],
+    origin: [process.env.CLIENT_URL],
     methods: ["GET", "POST"],
   },
 });
@@ -60,7 +60,7 @@ app.use("/api/score", ScoreRouter);
 
 // start server
 const port =
-  process.env.NODE_ENV === "production" ? process.env.PORT || 80 : 4002;
+  process.env.NODE_ENV === "production" ? process.env.PORT || 4002 : 4002;
 server.listen(port, function () {
   console.log("Server listening on port " + port);
 });

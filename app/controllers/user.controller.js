@@ -1,4 +1,5 @@
 const UserService = require("../services/user.service");
+const cloudinary = require("../utils/cloudinary");
 
 const UserController = {
   authenticate,
@@ -44,7 +45,9 @@ function getCurrent(req, res, next) {
 
 function getById(req, res, next) {
   UserService.getById(req.params.id)
-    .then((user) => (user ? res.json(user) : res.sendStatus(404)))
+    .then((user) =>
+      user ? res.json({ code: 200, result: user }) : res.sendStatus(404)
+    )
     .catch((err) => next(err));
 }
 
@@ -60,13 +63,20 @@ function _delete(req, res, next) {
     .catch((err) => next(err));
 }
 
-function uploadAvatar(req, res, next) {
-  let userParams = {
-    avatar: req.file.path.replace(/\\/g, "/"),
-  };
-  UserService.update(req.body.id, userParams)
-    .then((data) => res.json({ code: 200, result: data }))
-    .catch((err) => next(err));
+async function uploadAvatar(req, res, next) {
+  try {
+    // Upload image to cloudinary
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: "quiz-app/avatars",
+    });
+    let userParams = {
+      avatar: result.secure_url,
+    };
+    let data = await UserService.update(req.body.id, userParams);
+    res.json({ code: 200, result: data });
+  } catch (err) {
+    next(err);
+  }
 }
 
 function changePassword(req, res, next) {

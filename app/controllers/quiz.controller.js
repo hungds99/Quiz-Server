@@ -1,6 +1,7 @@
 const QuizService = require("../services/quiz.service");
 const path = require("path");
 const ResizeMulter = require("../utils/resizeMulter");
+const cloudinary = require("../utils/cloudinary");
 
 const QuizController = {
   create,
@@ -64,13 +65,20 @@ function getById(req, res, next) {
 }
 
 async function uploadThumbnail(req, res, next) {
-  let quizParams = {
-    id: req.body.id,
-    thumbnail: req.file.path.replace(/\\/g, "/"),
-  };
-  QuizService.update(quizParams)
-    .then((data) => res.json({ code: 200, result: data }))
-    .catch((err) => next(err));
+  try {
+    // Upload image to cloudinary
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: "quiz-app/thumbnails",
+    });
+    let quizParams = {
+      id: req.body.id,
+      thumbnail: result.secure_url,
+    };
+    let data = await QuizService.update(quizParams);
+    res.json({ code: 200, result: data });
+  } catch (err) {
+    next(err);
+  }
 }
 
 function getPaginationByCreator(req, res, next) {

@@ -33,27 +33,41 @@ async function getAll() {
 }
 
 async function updateLiveStatus(hostId, isLive) {
-  const filter = { _id: hostId };
   const update = { isLive: isLive };
-  return await Host.findOneAndUpdate(filter, update, {
-    new: true,
-  });
+  const host = await Host.findById(hostId);
+  if (host) {
+    Object.assign(host, update);
+    return await host.save();
+  }
 }
 
 async function updateCurrentQuestion(hostId, nextQuestion) {
-  const filter = { _id: hostId };
-  const update = { currentQuestion: nextQuestion };
-  return await Host.findOneAndUpdate(filter, update, {
-    new: true,
-  }).populate("players");
+  try {
+    const update = { currentQuestion: nextQuestion };
+    const host = await Host.findById(hostId);
+    if (host) {
+      Object.assign(host, update);
+      const hostUpdated = await host.save();
+      let response = await Host.populate(hostUpdated, { path: "players" });
+      return response;
+    }
+  } catch (error) {
+    console.log("Error : ", error);
+  }
 }
 
 async function findAndUpdate(hostId, fieldUpdate) {
-  const filter = { _id: hostId };
-  const update = fieldUpdate;
-  return await Host.findOneAndUpdate(filter, update, {
-    new: true,
-  }).populate("players");
+  try {
+    const host = await Host.findById(hostId);
+    if (host) {
+      Object.assign(host, fieldUpdate);
+      const hostUpdated = await host.save();
+      let response = await Host.populate(hostUpdated, { path: "players" });
+      return response;
+    }
+  } catch (error) {
+    console.log("Error : ", error);
+  }
 }
 
 async function findAndRemovePlayer(hostId, playerId) {

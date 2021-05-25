@@ -60,8 +60,6 @@ const initSockets = (io) => {
         if (host) {
           // Kiểm tra player đã tồn tại hay chưa
           hostDataClients = host;
-          console.log("Check Host Players: ", host.players);
-          console.log("Check Player Join: ", userInfo._id);
           if (!Helper.checkPlayerExisted(host.players, userInfo._id)) {
             // Thêm player vào hệ thống
             let hostUpdated = await HostService.findAndUpdate(id, {
@@ -184,13 +182,6 @@ const initSockets = (io) => {
           // Lấy thông tin câu hỏi
           let question = await QuestionService.getById(questionId);
 
-          // Lấy thông tin người dùng trả lời
-          console.log("Filter Info : ", {
-            hostId,
-            questionId,
-            playerInfo: userInfo._id,
-          });
-
           let correctAnswer;
           question.answers.forEach((answer) => {
             answer.isCorrect ? (correctAnswer = answer) : answer;
@@ -228,8 +219,6 @@ const initSockets = (io) => {
             playerChoiseAnswer,
             totalScore: playerTotalScore ? playerTotalScore.totalScore : 0,
           };
-
-          console.log("Kiểm tra kết quả người chơi >> ", dataResult);
 
           socket.emit("show-player-score", dataResult);
         }

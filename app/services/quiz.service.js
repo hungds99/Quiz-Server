@@ -27,13 +27,15 @@ async function createQuickQuiz(quizParams) {
 }
 
 async function update(quizParams) {
-  const filter = { _id: quizParams.id };
-  return await Quiz.findOneAndUpdate(filter, quizParams, {
-    new: true,
-  })
-    .populate("questions")
-    .populate("creator")
-    .populate("topic");
+  const quiz = await Quiz.findById(quizParams.id);
+  if (quiz) {
+    Object.assign(quiz, quizParams);
+    return await quiz
+      .save()
+      .populate("questions")
+      .populate("creator")
+      .populate("topic");
+  }
 }
 
 async function getAll() {
