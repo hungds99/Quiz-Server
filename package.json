@@ -1,11 +1,11 @@
 {
     "name": "node-express-mongodb",
     "version": "1.0.0",
-    "description": "Node.js Restful CRUD API with Node.js, Express and MongoDB",
+    "description": "Đồ án tốt nghiệp - Đại học Đông Á",
     "main": "server.js",
     "scripts": {
-        "start": "nodemon server.js",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "start": "node server.js",
+        "dev": "nodemon server.js"
     },
     "keywords": [
         "nodejs",
