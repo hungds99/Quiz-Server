@@ -38,7 +38,7 @@ let server = http.createServer(app);
 let io = socketio(server, {
   path: "/socket.io",
   cors: {
-    origin: [process.env.CLIENT_URL],
+    origin: process.env.CLIENT_URL,
     methods: ["GET", "POST"],
   },
 });
