@@ -28,26 +28,41 @@ const initSockets = (io) => {
           const host = await HostService.getById(hostDataClients._id);
           if (host) {
             // Xóa player
-            const hostUpdated = await HostService.findAndRemovePlayer(
-              host._id,
+            let playerIndex = Helper.findPlayerIndex(
+              host.players,
               userInfo._id
             );
+            console.log("Player Index : ", playerIndex);
+            if (playerIndex > -1) {
+              // Remove player vào hệ thống
+              let copyPlayer = [...host.players];
+              copyPlayer.splice(playerIndex, 1);
 
-            // Thông báo đến phòng có người thoát khỏi phòng
-            console.log(`${socket.id} ngừng kết nối...`);
-            io.to(host.pin).emit("player-leave-room", hostUpdated.players);
+              console.log("Copy Index : ", copyPlayer);
+
+              const hostUpdated = await HostService.findAndUpdate(host._id, {
+                players: [...copyPlayer],
+              });
+
+              // Thông báo đến phòng có người thoát khỏi phòng
+              io.to(host.pin).emit("player-leave-room", hostUpdated.players);
+            }
           }
+          console.log(`${socket.id} ngừng kết nối...`);
         }
       });
 
       // * B1. Host khởi tạo room
       socket.on("host-create-room", async ({ id }) => {
         // Khởi tạo room data
-        const host = await HostService.findAndUpdate(id, { isLive: true });
+        const host = await HostService.findAndUpdate(id, {
+          isLive: true,
+        });
         if (host) {
           hostDataClients = host;
           // Tham gia vào phòng
           socket.join(host.pin);
+          console.log("Host created : ", host.pin);
         } else {
           console.log("Host Không tồn tại !");
         }
@@ -57,12 +72,16 @@ const initSockets = (io) => {
       socket.on("player-join-room", async ({ id }) => {
         // Kiểm tra có tồn tại host hay không
         const host = await HostService.getById(id);
+
         if (host) {
           // Kiểm tra player đã tồn tại hay chưa
           hostDataClients = host;
+
           if (!Helper.checkPlayerExisted(host.players, userInfo._id)) {
+            console.log("Player tham gia vào host !", host.pin);
+
             // Thêm player vào hệ thống
-            let hostUpdated = await HostService.findAndUpdate(id, {
+            const hostUpdated = await HostService.findAndUpdate(id, {
               players: [...host.players, userInfo],
             });
 
