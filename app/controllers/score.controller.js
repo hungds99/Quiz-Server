@@ -6,6 +6,7 @@ const ScoreController = {
   getPlayerTotalScore,
   getPlayerScoreQuestion,
   getPlayerAnswerResultByHost,
+  getHistoryPlayerScore,
 };
 
 module.exports = ScoreController;
@@ -46,6 +47,12 @@ function getPlayerScoreQuestion(req, res, next) {
 
 function getPlayerAnswerResultByHost(req, res, next) {
   ScoreService.getPlayerAnswerResultByHost(req.body.hostId, req.body.playerId)
+    .then((data) => res.json({ code: 200, result: data }))
+    .catch((err) => next(err));
+}
+
+function getHistoryPlayerScore(req, res, next) {
+  ScoreService.getHistoryPlayerScore(req.userInfo._id)
     .then((data) => res.json({ code: 200, result: data }))
     .catch((err) => next(err));
 }

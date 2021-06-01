@@ -3,7 +3,11 @@ const ScoreController = require("../controllers/score.controller");
 
 const ScoreRouter = express.Router();
 
-// QuizRouter
+// ScoreRouter
+ScoreRouter.post(
+  "/get-history-player-score",
+  ScoreController.getHistoryPlayerScore
+);
 ScoreRouter.get(
   "/get-players-total-score/:hostId",
   ScoreController.getPlayersTotalScore
