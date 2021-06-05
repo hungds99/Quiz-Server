@@ -28,7 +28,9 @@ function authenticate(req, res, next) {
 function register(req, res, next) {
   UserService.create(req.body)
     .then(() => res.json({ code: 200, result: true }))
-    .catch((err) => next(err));
+    .catch((err) => {
+      res.json({ code: 401, message: err });
+    });
 }
 
 function getAll(req, res, next) {
