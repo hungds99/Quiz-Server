@@ -149,6 +149,8 @@ temp/
 !.vscode/extensions.json
 *.code-workspace
 
+package-lock.json
+
 
 
 # End of https://www.toptal.com/developers/gitignore/api/node,dotenv,git
