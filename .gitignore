@@ -150,6 +150,7 @@ temp/
 *.code-workspace
 
 package-lock.json
+.env
 
 
 
